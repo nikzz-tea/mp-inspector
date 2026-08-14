@@ -29,6 +29,8 @@ export interface BeatmapPlayed {
   scores: PlayerScore[];
 }
 
+type Rank = 'XH' | 'X' | 'SH' | 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
+
 export interface PlayerScore {
   userId: number;
   username: string;
@@ -36,7 +38,7 @@ export interface PlayerScore {
   score: number;
   accuracy: number;
   maxCombo: number;
-  rank: string;
+  rank: Rank;
   passed: boolean;
   mods: string[];
   statistics: ScoreStatistics;
@@ -101,7 +103,7 @@ export interface Score {
   mods: string[];
   passed: boolean;
   perfect: boolean;
-  rank: string;
+  rank: Rank;
   score: number;
   statistics: ScoreStatistics;
   user_id: number;
