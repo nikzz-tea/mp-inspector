@@ -7,6 +7,41 @@ export interface MatchResponse {
   current_game_id: number | null;
 }
 
+export interface MatchDetails {
+  match: Match;
+  beatmaps: BeatmapPlayed[];
+}
+
+export interface BeatmapPlayed {
+  id: number;
+  beatmapId: number;
+  startTime: string | null;
+  endTime: string | null;
+  startTimeLabel: string;
+  mode: string;
+  teamType: string;
+  mods: string[];
+  title: string;
+  artist: string;
+  creator: string;
+  difficultyName: string;
+  difficultyRating: number;
+  scores: PlayerScore[];
+}
+
+export interface PlayerScore {
+  userId: number;
+  username: string;
+  team: 'blue' | 'red' | 'none' | string;
+  score: number;
+  accuracy: number;
+  maxCombo: number;
+  rank: string;
+  passed: boolean;
+  mods: string[];
+  statistics: ScoreStatistics;
+}
+
 export interface Match {
   id: number;
   start_time: string | null;

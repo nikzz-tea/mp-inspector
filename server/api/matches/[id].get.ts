@@ -1,4 +1,12 @@
-import type { MatchEvent, MatchResponse, User } from '~~/shared/types/match';
+import type {
+  BeatmapPlayed,
+  MatchDetails,
+  MatchEvent,
+  MatchResponse,
+  PlayerScore,
+  Score,
+  User,
+} from '~~/shared/types/match';
 import { getOsuAccessToken } from '../../utils/osuToken';
 
 const OSU_API_BASE = 'https://osu.ppy.sh/api/v2';
@@ -26,14 +34,74 @@ export default defineEventHandler(async (event) => {
     Accept: 'application/json',
   };
 
-  const match = await fetchAllMatchEvents(id, headers);
-  const games = match.events.filter((event) => event.game != null && event.game.scores.length);
+  const osu = await fetchAllMatchEvents(id, headers);
+
+  const userById = new Map(osu.users.map((u) => [u.id, u.username]));
+
+  const beatmaps: BeatmapPlayed[] = osu.events
+    .filter((event) => event.game != null && event.game.scores.length > 0)
+    .map((event) => toBeatmapPlayed(event.game!, userById));
+
+  const result: MatchDetails = {
+    match: osu.match,
+    beatmaps,
+  };
+
+  return result;
+});
+
+function toBeatmapPlayed(
+  game: NonNullable<MatchEvent['game']>,
+  userById: Map<number, string>,
+): BeatmapPlayed {
+  const beatmap = game.beatmap;
+  const beatmapset = beatmap?.beatmapset;
 
   return {
-    ...match,
-    events: games,
+    id: game.id,
+    beatmapId: game.beatmap_id,
+    startTime: game.start_time,
+    endTime: game.end_time,
+    startTimeLabel: formatTime(game.start_time),
+    mode: game.mode,
+    teamType: game.team_type,
+    mods: game.mods,
+    title: beatmapset?.title ?? beatmapset?.title_unicode ?? '',
+    artist: beatmapset?.artist ?? beatmapset?.artist_unicode ?? '',
+    creator: beatmapset?.creator ?? '',
+    difficultyName: beatmap?.version ?? '',
+    difficultyRating: beatmap?.difficulty_rating ?? 0,
+    scores: game.scores.map((s) => toPlayerScore(s, userById)).sort((a, b) => b.score - a.score),
   };
-});
+}
+
+function toPlayerScore(score: Score, userById: Map<number, string>): PlayerScore {
+  return {
+    userId: score.user_id,
+    username: userById.get(score.user_id) ?? `#${score.user_id}`,
+    team: score.match.team,
+    score: score.score,
+    accuracy: score.accuracy,
+    maxCombo: score.max_combo,
+    rank: score.rank,
+    passed: score.passed,
+    mods: score.mods,
+    statistics: score.statistics,
+  };
+}
+
+function formatTime(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString('en-GB', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 async function fetchAllMatchEvents(
   id: string,
