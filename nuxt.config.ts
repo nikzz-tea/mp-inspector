@@ -6,7 +6,12 @@ export default defineNuxtConfig({
       title: 'osu! mp inspector',
     },
   },
-
+  runtimeConfig: {
+    // @ts-ignore
+    osuClientId: process.env.OSU_CLIENT_ID || '',
+    // @ts-ignore
+    osuClientSecret: process.env.OSU_CLIENT_SECRET || '',
+  },
   css: ['~/assets/css/tailwind.css'],
   modules: ['shadcn-nuxt'],
   shadcn: {
