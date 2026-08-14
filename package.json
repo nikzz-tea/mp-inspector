@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "ui:add": "shadcn-nuxt add"
+    "ui:add": "bunx shadcn-vue@latest add"
   },
   "dependencies": {
     "@lucide/vue": "^1.31.0",
