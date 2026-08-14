@@ -1,0 +1,71 @@
+<template>
+  <div
+    class="mx-auto flex min-h-screen max-w-5xl flex-col items-center px-4 py-16"
+    :class="beatmaps.length ? '' : 'justify-center'"
+  >
+    <div class="w-full text-center">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-5xl font-bold">osu! mp inspector</h1>
+        <form class="mt-8 flex w-full flex-row gap-3 max-sm:flex-col" @submit.prevent="submit">
+          <Input
+            v-model="input"
+            type="text"
+            placeholder="https://osu.ppy.sh/community/matches/99814465"
+            class="flex-1"
+            :aria-invalid="invalid"
+          />
+          <Button type="submit" class="cursor-pointer" :disabled="invalid || loading">
+            <Spinner v-if="loading" />
+            Search
+          </Button>
+        </form>
+        <p class="text-muted-foreground mt-4 text-sm">
+          Works with <code class="bg-muted rounded px-1 py-0.5">/community/matches/…</code>,
+          <code class="bg-muted rounded px-1 py-0.5">/mp/…</code> or plain match ID.
+        </p>
+      </div>
+    </div>
+
+    <Transition
+      enter-active-class="transition duration-600 ease-out"
+      enter-from-class="opacity-0 translate-y-6"
+    >
+      <div v-if="beatmaps.length && result" class="mx-auto mt-10 w-full text-left">
+        <h2 class="text-center text-2xl">{{ result.match.name }}</h2>
+        <h2 class="text-muted-foreground mt-2 text-sm font-medium">
+          {{ beatmaps.length }} beatmap{{ beatmaps.length === 1 ? '' : 's' }}
+        </h2>
+        <div class="mt-4 flex flex-col gap-4">
+          <BeatmapCard v-for="(b, i) in beatmaps" :key="b.id" :b :i />
+        </div>
+      </div>
+    </Transition>
+  </div>
+</template>
+
+<script setup lang="ts">
+const input = ref('');
+const isTriggered = ref(false);
+const loading = ref(false);
+const result = ref<MatchDetails | null>(null);
+
+const invalid = computed(() => isTriggered.value && parseMatchId(input.value) === null);
+
+const beatmaps = computed(() => result.value?.beatmaps ?? []);
+
+const submit = async () => {
+  isTriggered.value = true;
+
+  const id = parseMatchId(input.value);
+  if (invalid.value) return;
+
+  loading.value = true;
+  try {
+    result.value = await $fetch<MatchDetails>(`/api/matches/${id}`);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+};
+</script>
