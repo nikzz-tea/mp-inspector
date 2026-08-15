@@ -1,5 +1,3 @@
-import type { BeatmapPlayed } from '~~/shared/types/match';
-
 export type WinnerMode = 'score' | 'accuracy';
 export type CostFormula = 'bathbot' | 'osuplus';
 
@@ -28,9 +26,12 @@ export interface CostBreakdown {
   matchCost: number;
 }
 
-export function useMatchStats(beatmaps: Ref<BeatmapPlayed[]>, visibleIds: Ref<Set<number>>) {
-  const winnerMode = ref<WinnerMode>('score');
-  const costFormula = ref<CostFormula>('bathbot');
+export function useMatchStats(
+  beatmaps: Ref<BeatmapPlayed[]>,
+  visibleIds: Ref<Set<number>>,
+  winnerMode: Ref<WinnerMode>,
+  costFormula: Ref<CostFormula>,
+) {
   const visibleBeatmaps = computed(() => beatmaps.value.filter((b) => visibleIds.value.has(b.id)));
   const teamPlayed = computed(() =>
     visibleBeatmaps.value.some((b) => b.teamType === 'team-vs' || b.teamType === 'tag-team-vs'),

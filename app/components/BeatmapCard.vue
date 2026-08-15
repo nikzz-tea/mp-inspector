@@ -1,7 +1,12 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   b: BeatmapPlayed;
   i: number;
+  winnerMode: WinnerMode;
+}>();
+
+const emit = defineEmits<{
+  (e: 'toggle'): void;
 }>();
 
 const isTeamPlay = (b: BeatmapPlayed): boolean => {
@@ -11,6 +16,28 @@ const isTeamPlay = (b: BeatmapPlayed): boolean => {
 const teamScores = (b: BeatmapPlayed, team: 'red' | 'blue'): PlayerScore[] => {
   return b.scores.filter((s) => s.team === team);
 };
+
+function teamMetric(b: BeatmapPlayed, team: 'red' | 'blue'): number {
+  const scores = teamScores(b, team);
+  if (!scores.length) return 0;
+  if (props.winnerMode === 'accuracy') {
+    return scores.reduce((sum, s) => sum + s.accuracy, 0) / scores.length;
+  }
+  return scores.reduce((sum, s) => sum + s.score, 0);
+}
+
+const winningTeam = computed(() => {
+  if (!isTeamPlay(props.b)) return null;
+  const red = teamMetric(props.b, 'red');
+  const blue = teamMetric(props.b, 'blue');
+  if (red === blue) return null;
+  return red > blue ? 'red' : 'blue';
+});
+
+function teamMetricDisplay(team: 'red' | 'blue') {
+  const m = teamMetric(props.b, team);
+  return props.winnerMode === 'accuracy' ? (m * 100).toFixed(2) + '%' : m.toLocaleString();
+}
 </script>
 
 <template>
@@ -49,12 +76,28 @@ const teamScores = (b: BeatmapPlayed, team: 'red' | 'blue'): PlayerScore[] => {
     <CardContent class="flex flex-col gap-4">
       <div v-if="isTeamPlay(b)" class="grid gap-4 max-sm:grid-rows-2 sm:grid-cols-2">
         <div>
-          <p class="mb-1 text-sm font-semibold text-red-500">Red</p>
+          <p class="mb-1 text-sm font-semibold text-red-500 sm:text-right">Red</p>
           <ScoreList :global-mods="b.mods.length > 0" :scores="teamScores(b, 'red')" />
+          <p
+            class="mt-2 font-semibold tabular-nums sm:text-right"
+            :class="
+              winningTeam === 'red' ? 'text-lg text-red-500' : 'text-muted-foreground text-sm'
+            "
+          >
+            {{ teamMetricDisplay('red') }}
+          </p>
         </div>
         <div>
           <p class="mb-1 text-sm font-semibold text-blue-500">Blue</p>
           <ScoreList :global-mods="b.mods.length > 0" :scores="teamScores(b, 'blue')" />
+          <p
+            class="mt-2 font-semibold tabular-nums"
+            :class="
+              winningTeam === 'blue' ? 'text-lg text-blue-500' : 'text-muted-foreground text-sm'
+            "
+          >
+            {{ teamMetricDisplay('blue') }}
+          </p>
         </div>
       </div>
       <div v-else>
