@@ -5,19 +5,35 @@ const props = defineProps<{
   b: BeatmapPlayed;
   i: number;
   winnerMode: WinnerMode;
+  ezMultiplier?: number;
   hidden?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'toggle'): void;
+  (e: 'update:ezMultiplier', value: number): void;
 }>();
 
 const isTeamPlay = (b: BeatmapPlayed): boolean => {
   return b.teamType === 'team-vs' || b.teamType === 'tag-team-vs';
 };
 
+const hasEZInMap = computed(() =>
+  props.b.scores.some((s) => s.mods.some((m) => m.toLowerCase() === 'ez')),
+);
+
+function adjustedScore(score: PlayerScore): number {
+  const isEZ = score.mods.some((m) => m.toLowerCase() === 'ez');
+  if (isEZ) return score.score * (props.ezMultiplier ?? 1);
+  return score.score;
+}
+
+function adjustedScores(scores: PlayerScore[]): PlayerScore[] {
+  return scores.map((s) => ({ ...s, score: adjustedScore(s) }));
+}
+
 const teamScores = (b: BeatmapPlayed, team: 'red' | 'blue'): PlayerScore[] => {
-  return b.scores.filter((s) => s.team === team);
+  return adjustedScores(b.scores.filter((s) => s.team === team));
 };
 
 function teamMetric(b: BeatmapPlayed, team: 'red' | 'blue'): number {
@@ -39,25 +55,41 @@ const winningTeam = computed(() => {
 
 function teamMetricDisplay(team: 'red' | 'blue') {
   const m = teamMetric(props.b, team);
-  return props.winnerMode === 'accuracy' ? (m * 100).toFixed(2) + '%' : m.toLocaleString();
+  return props.winnerMode === 'accuracy'
+    ? (m * 100).toFixed(2) + '%'
+    : m.toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
 </script>
 
 <template>
   <Card :class="hidden ? 'opacity-60' : ''" class="group relative gap-2 duration-200">
-    <Button
-      type="button"
-      variant="outline"
-      size="icon"
-      class="bg-background text-muted-foreground hover:text-foreground absolute z-10 cursor-pointer rounded-md shadow-xs duration-150 max-sm:-top-3 max-sm:right-4 sm:-top-2 sm:right-12 sm:opacity-0 sm:group-hover:-top-3 sm:group-hover:opacity-100"
+    <div
+      class="absolute z-10 flex items-center gap-1 duration-150 max-sm:-top-3 max-sm:right-4 sm:-top-2 sm:right-12 sm:opacity-0 sm:group-hover:-top-3 sm:group-hover:opacity-100"
       :class="hidden ? 'sm:-top-3 sm:opacity-100' : ''"
-      :aria-label="hidden ? 'Show map' : 'Hide map'"
-      :title="hidden ? 'Show map' : 'Hide map'"
-      @click="emit('toggle')"
     >
-      <Eye v-if="hidden" class="size-4" />
-      <EyeOff v-else class="size-4" />
-    </Button>
+      <Input
+        v-if="hasEZInMap"
+        type="number"
+        :model-value="ezMultiplier ?? 1"
+        step="0.10"
+        min="0"
+        max="10"
+        class="h-9 w-14 bg-white px-1 py-0 text-right text-sm"
+        @update:model-value="(v) => emit('update:ezMultiplier', Number(v) || 1)"
+      />
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        class="bg-background text-muted-foreground hover:text-foreground cursor-pointer rounded-md shadow-xs"
+        :aria-label="hidden ? 'Show map' : 'Hide map'"
+        :title="hidden ? 'Show map' : 'Hide map'"
+        @click="emit('toggle')"
+      >
+        <Eye v-if="hidden" class="size-4" />
+        <EyeOff v-else class="size-4" />
+      </Button>
+    </div>
     <CardHeader>
       <div class="flex items-start justify-between gap-4 max-sm:flex-col-reverse max-sm:gap-2">
         <div class="min-w-0 pr-8">
@@ -122,7 +154,7 @@ function teamMetricDisplay(team: 'red' | 'blue') {
             </div>
           </div>
           <div v-else>
-            <ScoreList :global-mods="b.mods.length > 0" :scores="b.scores" />
+            <ScoreList :global-mods="b.mods.length > 0" :scores="adjustedScores(b.scores)" />
           </div>
         </CardContent>
       </div>

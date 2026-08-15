@@ -29,7 +29,7 @@ const rankColor = {
       <span class="ml-auto font-bold" :class="rankColor[s.rank]">{{ s.rank }}</span>
       <span v-if="!globalMods && s.mods.length" class="text-right">+{{ s.mods.join('') }}</span>
       <span class="text-right tabular-nums" :class="globalMods && 'text-right'">
-        {{ s.score.toLocaleString() }}
+        {{ s.score.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}
       </span>
       <span class="w-12 text-right tabular-nums">{{ (s.accuracy * 100).toFixed(2) }}%</span>
     </li>

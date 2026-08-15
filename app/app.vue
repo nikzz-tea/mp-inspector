@@ -37,6 +37,7 @@
           :visible-ids="visibleIds"
           v-model:winner-mode="winnerMode"
           v-model:cost-formula="costFormula"
+          :ez-multipliers="ezMultipliers"
           class="mt-4"
         />
         <h2 class="text-muted-foreground mt-2 text-sm font-medium">
@@ -49,8 +50,10 @@
             :b
             :i
             :winner-mode="winnerMode"
+            :ez-multiplier="ezMultipliers.get(b.id)"
             :hidden="!visibleIds.has(b.id)"
             @toggle="toggleMap(b.id)"
+            @update:ez-multiplier="(v) => setEzMultiplier(b.id, v)"
           />
         </div>
       </div>
@@ -66,6 +69,7 @@ const result = ref<MatchDetails | null>(null);
 const winnerMode = ref<WinnerMode>('score');
 const costFormula = ref<CostFormula>('bathbot');
 const visibleIds = ref<Set<number>>(new Set());
+const ezMultipliers = ref<Map<number, number>>(new Map());
 const invalid = computed(() => isTriggered.value && parseMatchId(input.value) === null);
 const beatmaps = computed(() => result.value?.beatmaps ?? []);
 
@@ -84,6 +88,12 @@ function toggleMap(id: number) {
   if (next.has(id)) next.delete(id);
   else next.add(id);
   visibleIds.value = next;
+}
+
+function setEzMultiplier(id: number, value: number) {
+  const next = new Map(ezMultipliers.value);
+  next.set(id, value);
+  ezMultipliers.value = next;
 }
 
 const submit = async () => {

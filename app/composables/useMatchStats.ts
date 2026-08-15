@@ -31,8 +31,28 @@ export function useMatchStats(
   visibleIds: Ref<Set<number>>,
   winnerMode: Ref<WinnerMode>,
   costFormula: Ref<CostFormula>,
+  ezMultipliers: Ref<Map<number, number>>,
 ) {
   const visibleBeatmaps = computed(() => beatmaps.value.filter((b) => visibleIds.value.has(b.id)));
+
+  function hasEZ(score: PlayerScore): boolean {
+    return score.mods.some((m) => m.toLowerCase() === 'ez');
+  }
+  function adjustedScore(score: PlayerScore, beatmap: BeatmapPlayed): number {
+    if (hasEZ(score)) {
+      const mult = ezMultipliers.value.get(beatmap.id) ?? 1;
+      return score.score * mult;
+    }
+    return score.score;
+  }
+  function adjustedScores(beatmap: BeatmapPlayed): Array<PlayerScore & { originalScore: number }> {
+    return beatmap.scores.map((s) => ({
+      ...s,
+      originalScore: s.score,
+      score: adjustedScore(s, beatmap),
+    }));
+  }
+
   const teamPlayed = computed(() =>
     visibleBeatmaps.value.some((b) => b.teamType === 'team-vs' || b.teamType === 'tag-team-vs'),
   );
@@ -65,7 +85,7 @@ export function useMatchStats(
   const players = computed<PlayerStats[]>(() => {
     const map = new Map<number, PlayerStats>();
     for (const b of visibleBeatmaps.value) {
-      for (const s of b.scores) {
+      for (const s of adjustedScores(b)) {
         let p = map.get(s.userId);
         if (!p) {
           p = {
@@ -95,7 +115,7 @@ export function useMatchStats(
   const teams = computed<TeamStats[]>(() => {
     const map = new Map<string, TeamStats>();
     for (const b of visibleBeatmaps.value) {
-      for (const s of b.scores) {
+      for (const s of adjustedScores(b)) {
         let t = map.get(s.team);
         if (!t) {
           t = {
@@ -137,8 +157,12 @@ export function useMatchStats(
       return redAcc > blueAcc ? 'red' : 'blue';
     }
 
-    const redScore = red.reduce((sum, s) => sum + s.score, 0);
-    const blueScore = blue.reduce((sum, s) => sum + s.score, 0);
+    const redScore = adjustedScores(b)
+      .filter((s) => s.team === 'red')
+      .reduce((sum, s) => sum + s.score, 0);
+    const blueScore = adjustedScores(b)
+      .filter((s) => s.team === 'blue')
+      .reduce((sum, s) => sum + s.score, 0);
     if (redScore === blueScore) return null;
     return redScore > blueScore ? 'red' : 'blue';
   }
@@ -154,9 +178,10 @@ export function useMatchStats(
     return visibleBeatmaps.value
       .filter((b) => b.scores.some((s) => s.userId === playerId))
       .map((b) => {
-        const sum = b.scores.reduce((acc, s) => acc + s.score, 0);
-        const avg = sum / b.scores.length;
-        const player = b.scores.find((s) => s.userId === playerId)!;
+        const scores = adjustedScores(b);
+        const sum = scores.reduce((acc, s) => acc + s.score, 0);
+        const avg = sum / scores.length;
+        const player = scores.find((s) => s.userId === playerId)!;
         return player.score / avg;
       });
   }

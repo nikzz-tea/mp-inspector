@@ -6,6 +6,7 @@ const props = defineProps<{
   visibleIds: Set<number>;
   winnerMode: WinnerMode;
   costFormula: CostFormula;
+  ezMultipliers: Map<number, number>;
 }>();
 
 const emit = defineEmits<{
@@ -17,12 +18,14 @@ const beatmapsRef = toRef(props, 'beatmaps');
 const visibleIdsRef = toRef(props, 'visibleIds');
 const winnerModeRef = toRef(props, 'winnerMode');
 const costFormulaRef = toRef(props, 'costFormula');
+const ezMultipliersRef = toRef(props, 'ezMultipliers');
 
 const { teamPlayed, teamMapWins, players, costBreakdown } = useMatchStats(
   beatmapsRef,
   visibleIdsRef,
   winnerModeRef,
   costFormulaRef,
+  ezMultipliersRef,
 );
 
 const bluePlayers = computed(() => players.value.filter((p) => p.team === 'blue'));
