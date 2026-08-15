@@ -32,11 +32,26 @@
     >
       <div v-if="beatmaps.length && result" class="mx-auto mt-10 w-full text-left">
         <h2 class="text-center text-2xl">{{ result.match.name }}</h2>
+        <MatchStats
+          :beatmaps="beatmaps"
+          :visible-ids="visibleIds"
+          v-model:winner-mode="winnerMode"
+          v-model:cost-formula="costFormula"
+          class="mt-4"
+        />
         <h2 class="text-muted-foreground mt-2 text-sm font-medium">
-          {{ beatmaps.length }} beatmap{{ beatmaps.length === 1 ? '' : 's' }}
+          {{ visibleBeatmaps.length }} beatmap{{ visibleBeatmaps.length === 1 ? '' : 's' }}
         </h2>
         <div class="mt-4 flex flex-col gap-4">
-          <BeatmapCard v-for="(b, i) in beatmaps" :key="b.id" :b :i />
+          <BeatmapCard
+            v-for="(b, i) in beatmaps"
+            :key="b.id"
+            :b
+            :i
+            :winner-mode="winnerMode"
+            :hidden="!visibleIds.has(b.id)"
+            @toggle="toggleMap(b.id)"
+          />
         </div>
       </div>
     </Transition>
@@ -48,10 +63,28 @@ const input = ref('');
 const isTriggered = ref(false);
 const loading = ref(false);
 const result = ref<MatchDetails | null>(null);
-
+const winnerMode = ref<WinnerMode>('score');
+const costFormula = ref<CostFormula>('bathbot');
+const visibleIds = ref<Set<number>>(new Set());
 const invalid = computed(() => isTriggered.value && parseMatchId(input.value) === null);
-
 const beatmaps = computed(() => result.value?.beatmaps ?? []);
+
+watch(
+  beatmaps,
+  (list) => {
+    visibleIds.value = new Set(list.map((b) => b.id));
+  },
+  { deep: true },
+);
+
+const visibleBeatmaps = computed(() => beatmaps.value.filter((b) => visibleIds.value.has(b.id)));
+
+function toggleMap(id: number) {
+  const next = new Set(visibleIds.value);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  visibleIds.value = next;
+}
 
 const submit = async () => {
   isTriggered.value = true;
