@@ -74,9 +74,7 @@ function onCostFormula(value: AcceptableValue) {
           <StatsTable :players="bluePlayers" :cost-breakdown="costBreakdown" />
         </div>
         <div>
-          <div
-            class="flex items-center max-sm:flex-row-reverse max-sm:justify-end max-sm:gap-2 sm:justify-between"
-          >
+          <div class="max-sm flex items-center max-sm:gap-2 sm:justify-between">
             <span class="text-xl font-bold text-red-500"> {{ teamMapWins.red ?? 0 }} </span>
             <span class="size-4 rounded-full bg-red-500"></span>
           </div>
