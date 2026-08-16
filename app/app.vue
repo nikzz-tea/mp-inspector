@@ -30,7 +30,12 @@
       enter-from-class="opacity-0 translate-y-6"
     >
       <div v-if="beatmaps.length && result" class="mx-auto mt-10 w-full text-left">
-        <h2 class="text-center text-2xl">{{ result.match.name }}</h2>
+        <a
+          :href="'https://osu.ppy.sh/community/matches/' + result.match.id"
+          class="block text-center text-2xl hover:underline"
+        >
+          {{ result.match.name }}
+        </a>
         <MatchStats
           :beatmaps="beatmaps"
           :visible-ids="visibleIds"
