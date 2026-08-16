@@ -11,7 +11,6 @@
             v-model="input"
             type="text"
             placeholder="https://osu.ppy.sh/community/matches/99814465"
-            class="flex-1"
             :aria-invalid="invalid"
           />
           <Button type="submit" class="cursor-pointer" :disabled="invalid || loading">
