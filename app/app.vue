@@ -1,7 +1,7 @@
 <template>
   <div
     class="mx-auto flex min-h-screen max-w-5xl flex-col items-center px-4 py-16"
-    :class="beatmaps.length ? '' : 'justify-center'"
+    :class="beatmaps.length ? 'max-sm:py-4' : 'justify-center'"
   >
     <div class="w-full text-center">
       <div class="mx-auto max-w-3xl">
