@@ -18,9 +18,10 @@ const isTeamPlay = (b: BeatmapPlayed): boolean => {
   return b.teamType === 'team-vs' || b.teamType === 'tag-team-vs';
 };
 
-const hasEZInMap = computed(() =>
-  props.b.scores.some((s) => s.mods.some((m) => m.toLowerCase() === 'ez')),
-);
+const hasEZInMap = computed(() => {
+  const hasEZ = (s: PlayerScore) => s.mods.some((m) => m.toLowerCase() === 'ez');
+  return props.b.scores.some(hasEZ) && props.b.scores.some((s) => !hasEZ(s));
+});
 
 function adjustedScore(score: PlayerScore): number {
   const isEZ = score.mods.some((m) => m.toLowerCase() === 'ez');
