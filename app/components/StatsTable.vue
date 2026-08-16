@@ -1,21 +1,24 @@
 <script setup lang="ts">
 defineProps<{
   players: PlayerStats[];
+  playerRank: Map<PlayerStats['userId'], number>;
   costBreakdown: (id: number) => CostBreakdown;
 }>();
 
 function breakdownTitle(b: CostBreakdown): string {
   return `${b.matchCost.toFixed(2)} = (${b.performance.toFixed(2)} * ${b.participation.toFixed(2)} * ${b.mods.toFixed(2)}) + ${b.tiebreaker.toFixed(2)}`;
 }
+
+const playerColor = ['text-yellow-500', 'text-zinc-400', 'text-orange-700'];
 </script>
 
 <template>
   <Table>
     <TableHeader class="[&_tr]:border-0">
       <TableRow class="border-0 hover:bg-transparent">
-        <TableHead class="text-muted-foreground px-2 text-xs font-normal max-sm:px-0"
-          >Player</TableHead
-        >
+        <TableHead class="text-muted-foreground text-brow px-2 text-xs font-normal max-sm:px-0">
+          Player
+        </TableHead>
         <TableHead class="text-muted-foreground px-2 text-right text-xs font-normal max-sm:px-0">
           Avg score
         </TableHead>
@@ -36,6 +39,7 @@ function breakdownTitle(b: CostBreakdown): string {
           <a
             :href="'https://osu.ppy.sh/u/' + p.userId"
             class="text-foreground font-medium hover:underline"
+            :class="playerColor[playerRank.get(p.userId) ?? -1]"
           >
             {{ p.username }}
           </a>

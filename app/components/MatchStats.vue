@@ -30,6 +30,11 @@ const { teamPlayed, teamMapWins, players, costBreakdown } = useMatchStats(
 
 const bluePlayers = computed(() => players.value.filter((p) => p.team === 'blue'));
 const redPlayers = computed(() => players.value.filter((p) => p.team === 'red'));
+const playerRank = computed<Map<PlayerStats['userId'], number>>(() => {
+  const map = new Map<number, number>();
+  [...players.value].slice(0, 3).forEach((p, i) => map.set(p.userId, i));
+  return map;
+});
 
 function onWinnerMode(value: AcceptableValue) {
   if (value != null) emit('update:winnerMode', value as WinnerMode);
@@ -74,17 +79,17 @@ function onCostFormula(value: AcceptableValue) {
             <span class="size-4 rounded-full bg-blue-500"></span>
             <span class="text-xl font-bold text-blue-500"> {{ teamMapWins.blue ?? 0 }} </span>
           </div>
-          <StatsTable :players="bluePlayers" :cost-breakdown="costBreakdown" />
+          <StatsTable :players="bluePlayers" :playerRank :cost-breakdown="costBreakdown" />
         </div>
         <div>
           <div class="max-sm flex items-center max-sm:gap-2 sm:justify-between">
             <span class="text-xl font-bold text-red-500"> {{ teamMapWins.red ?? 0 }} </span>
             <span class="size-4 rounded-full bg-red-500"></span>
           </div>
-          <StatsTable :players="redPlayers" :cost-breakdown="costBreakdown" />
+          <StatsTable :players="redPlayers" :playerRank :cost-breakdown="costBreakdown" />
         </div>
       </div>
-      <StatsTable v-else :players="players" :cost-breakdown="costBreakdown" />
+      <StatsTable v-else :players="players" :playerRank :cost-breakdown="costBreakdown" />
     </CardContent>
   </Card>
 </template>

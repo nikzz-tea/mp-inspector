@@ -5,9 +5,9 @@ defineProps<{
 }>();
 
 const rankColor = {
-  XH: 'text-grey-500',
+  XH: 'text-zinc-400',
   X: 'text-yellow-500',
-  SH: 'text-grey-500',
+  SH: 'text-zinc-400',
   S: 'text-yellow-500',
   A: 'text-green-500',
   B: 'text-blue-500',
