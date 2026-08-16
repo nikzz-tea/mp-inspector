@@ -5,9 +5,9 @@ defineProps<{
   costBreakdown: (id: number) => CostBreakdown;
 }>();
 
-function breakdownTitle(b: CostBreakdown): string {
+const breakdownTitle = (b: CostBreakdown): string => {
   return `${b.matchCost.toFixed(2)} = (${b.performance.toFixed(2)} * ${b.participation.toFixed(2)} * ${b.mods.toFixed(2)}) + ${b.tiebreaker.toFixed(2)}`;
-}
+};
 
 const playerColor = ['text-yellow-500', 'text-zinc-400', 'text-orange-700'];
 </script>

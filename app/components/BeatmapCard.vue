@@ -23,28 +23,28 @@ const hasEZInMap = computed(() => {
   return props.b.scores.some(hasEZ) && props.b.scores.some((s) => !hasEZ(s));
 });
 
-function adjustedScore(score: PlayerScore): number {
+const adjustedScore = (score: PlayerScore): number => {
   const isEZ = score.mods.some((m) => m.toLowerCase() === 'ez');
   if (isEZ) return score.score * (props.ezMultiplier ?? 1);
   return score.score;
-}
+};
 
-function adjustedScores(scores: PlayerScore[]): PlayerScore[] {
+const adjustedScores = (scores: PlayerScore[]): PlayerScore[] => {
   return scores.map((s) => ({ ...s, score: adjustedScore(s) }));
-}
+};
 
 const teamScores = (b: BeatmapPlayed, team: 'red' | 'blue'): PlayerScore[] => {
   return adjustedScores(b.scores.filter((s) => s.team === team));
 };
 
-function teamMetric(b: BeatmapPlayed, team: 'red' | 'blue'): number {
+const teamMetric = (b: BeatmapPlayed, team: 'red' | 'blue'): number => {
   const scores = teamScores(b, team);
   if (!scores.length) return 0;
   if (props.winnerMode === 'accuracy') {
     return scores.reduce((sum, s) => sum + s.accuracy, 0) / scores.length;
   }
   return scores.reduce((sum, s) => sum + s.score, 0);
-}
+};
 
 const winningTeam = computed(() => {
   if (!isTeamPlay(props.b)) return null;
@@ -54,12 +54,12 @@ const winningTeam = computed(() => {
   return red > blue ? 'red' : 'blue';
 });
 
-function teamMetricDisplay(team: 'red' | 'blue') {
+const teamMetricDisplay = (team: 'red' | 'blue') => {
   const m = teamMetric(props.b, team);
   return props.winnerMode === 'accuracy'
     ? (m * 100).toFixed(2) + '%'
     : m.toLocaleString(undefined, { maximumFractionDigits: 0 });
-}
+};
 
 const commonMods = computed(() => {
   if (!props.b.scores[0] || !props.b.scores[0].mods.length) return [];

@@ -1,4 +1,4 @@
-export function parseMatchId(input: string): number | null {
+export const parseMatchId = (input: string): number | null => {
   const trimmed = input.trim();
   if (!trimmed) return null;
 
@@ -13,4 +13,4 @@ export function parseMatchId(input: string): number | null {
   } catch {}
 
   return null;
-}
+};

@@ -36,13 +36,13 @@ const playerRank = computed<Map<PlayerStats['userId'], number>>(() => {
   return map;
 });
 
-function onWinnerMode(value: AcceptableValue) {
+const onWinnerMode = (value: AcceptableValue) => {
   if (value != null) emit('update:winnerMode', value as WinnerMode);
-}
+};
 
-function onCostFormula(value: AcceptableValue) {
+const onCostFormula = (value: AcceptableValue) => {
   if (value != null) emit('update:costFormula', value as CostFormula);
-}
+};
 </script>
 
 <template>

@@ -12,7 +12,10 @@ interface CachedToken {
 
 const tokenCache = new Map<string, CachedToken>();
 
-export async function getOsuAccessToken(clientId: string, clientSecret: string): Promise<string> {
+export const getOsuAccessToken = async (
+  clientId: string,
+  clientSecret: string,
+): Promise<string> => {
   const cacheKey = `${clientId}:${clientSecret}`;
   const cached = tokenCache.get(cacheKey);
 
@@ -45,4 +48,4 @@ export async function getOsuAccessToken(clientId: string, clientSecret: string):
   });
 
   return response.access_token;
-}
+};

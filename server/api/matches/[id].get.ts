@@ -50,10 +50,10 @@ export default defineEventHandler(async (event) => {
   return result;
 });
 
-function toBeatmapPlayed(
+const toBeatmapPlayed = (
   game: NonNullable<MatchEvent['game']>,
   userById: Map<number, string>,
-): BeatmapPlayed {
+): BeatmapPlayed => {
   const beatmap = game.beatmap;
   const beatmapset = beatmap?.beatmapset;
 
@@ -73,9 +73,9 @@ function toBeatmapPlayed(
     difficultyRating: beatmap?.difficulty_rating ?? 0,
     scores: game.scores.map((s) => toPlayerScore(s, userById)).sort((a, b) => b.score - a.score),
   };
-}
+};
 
-function toPlayerScore(score: Score, userById: Map<number, string>): PlayerScore {
+const toPlayerScore = (score: Score, userById: Map<number, string>): PlayerScore => {
   return {
     userId: score.user_id,
     username: userById.get(score.user_id) ?? `#${score.user_id}`,
@@ -88,9 +88,9 @@ function toPlayerScore(score: Score, userById: Map<number, string>): PlayerScore
     mods: score.mods,
     statistics: score.statistics,
   };
-}
+};
 
-function formatTime(iso: string | null): string {
+const formatTime = (iso: string | null): string => {
   if (!iso) return '';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
@@ -101,12 +101,12 @@ function formatTime(iso: string | null): string {
     hour: '2-digit',
     minute: '2-digit',
   });
-}
+};
 
-async function fetchAllMatchEvents(
+const fetchAllMatchEvents = async (
   id: string,
   headers: Record<string, string>,
-): Promise<MatchResponse> {
+): Promise<MatchResponse> => {
   let first: MatchResponse | null = null;
   const allEvents: MatchEvent[] = [];
   let users: User[] = [];
@@ -147,4 +147,4 @@ async function fetchAllMatchEvents(
     events: allEvents.sort((a, b) => a.id - b.id),
     users,
   };
-}
+};

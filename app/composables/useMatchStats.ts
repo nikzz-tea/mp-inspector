@@ -26,32 +26,34 @@ export interface CostBreakdown {
   matchCost: number;
 }
 
-export function useMatchStats(
+export const useMatchStats = (
   beatmaps: Ref<BeatmapPlayed[]>,
   visibleIds: Ref<Set<number>>,
   winnerMode: Ref<WinnerMode>,
   costFormula: Ref<CostFormula>,
   ezMultipliers: Ref<Map<number, number>>,
-) {
+) => {
   const visibleBeatmaps = computed(() => beatmaps.value.filter((b) => visibleIds.value.has(b.id)));
 
-  function hasEZ(score: PlayerScore): boolean {
+  const hasEZ = (score: PlayerScore): boolean => {
     return score.mods.some((m) => m.toLowerCase() === 'ez');
-  }
-  function adjustedScore(score: PlayerScore, beatmap: BeatmapPlayed): number {
+  };
+  const adjustedScore = (score: PlayerScore, beatmap: BeatmapPlayed): number => {
     if (hasEZ(score)) {
       const mult = ezMultipliers.value.get(beatmap.id) ?? 1;
       return score.score * mult;
     }
     return score.score;
-  }
-  function adjustedScores(beatmap: BeatmapPlayed): Array<PlayerScore & { originalScore: number }> {
+  };
+  const adjustedScores = (
+    beatmap: BeatmapPlayed,
+  ): Array<PlayerScore & { originalScore: number }> => {
     return beatmap.scores.map((s) => ({
       ...s,
       originalScore: s.score,
       score: adjustedScore(s, beatmap),
     }));
-  }
+  };
 
   const teamPlayed = computed(() =>
     visibleBeatmaps.value.some((b) => b.teamType === 'team-vs' || b.teamType === 'tag-team-vs'),
@@ -145,7 +147,7 @@ export function useMatchStats(
       });
   });
 
-  function mapWinner(b: BeatmapPlayed, mode: WinnerMode): string | null {
+  const mapWinner = (b: BeatmapPlayed, mode: WinnerMode): string | null => {
     const red = b.scores.filter((s) => s.team === 'red');
     const blue = b.scores.filter((s) => s.team === 'blue');
     if (!red.length || !blue.length) return null;
@@ -165,7 +167,7 @@ export function useMatchStats(
       .reduce((sum, s) => sum + s.score, 0);
     if (redScore === blueScore) return null;
     return redScore > blueScore ? 'red' : 'blue';
-  }
+  };
 
   const FLAT_BONUS = 0.5;
   const BASE_PARTICIPATION_BONUS = 1.5;
@@ -174,7 +176,7 @@ export function useMatchStats(
   const TIEBREAKER_FACTOR = 0.25;
   const MAX_TIEBREAKER_BONUS = 0.5;
 
-  function perGameRatio(playerId: number) {
+  const perGameRatio = (playerId: number) => {
     return visibleBeatmaps.value
       .filter((b) => b.scores.some((s) => s.userId === playerId))
       .map((b) => {
@@ -184,9 +186,9 @@ export function useMatchStats(
         const player = scores.find((s) => s.userId === playerId)!;
         return player.score / avg;
       });
-  }
+  };
 
-  function modCombinations(playerId: number): number {
+  const modCombinations = (playerId: number): number => {
     const set = new Set<string>();
     for (const b of visibleBeatmaps.value) {
       const p = b.scores.find((s) => s.userId === playerId);
@@ -194,9 +196,9 @@ export function useMatchStats(
       set.add([...p.mods].sort().join(''));
     }
     return set.size;
-  }
+  };
 
-  function bathbotBreakdown(playerId: number): CostBreakdown {
+  const bathbotBreakdown = (playerId: number): CostBreakdown => {
     const gamesCount = visibleBeatmaps.value.length;
     const ratios = perGameRatio(playerId);
     const scoresLen = ratios.length;
@@ -242,17 +244,17 @@ export function useMatchStats(
       tiebreaker: tiebreakerBonus,
       matchCost,
     };
-  }
+  };
 
-  function osuPlusCost(playerId: number): number {
+  const osuPlusCost = (playerId: number): number => {
     const ratios = perGameRatio(playerId);
     if (!ratios.length) return 0;
     const totalRelativeScore = ratios.reduce((sum, r) => sum + r, 0);
     const consistencyMultiplier = 2 / (ratios.length + 2);
     return consistencyMultiplier * totalRelativeScore;
-  }
+  };
 
-  function costBreakdown(playerId: number): CostBreakdown {
+  const costBreakdown = (playerId: number): CostBreakdown => {
     if (costFormula.value === 'bathbot') return bathbotBreakdown(playerId);
     const matchCost = osuPlusCost(playerId);
     return {
@@ -262,7 +264,7 @@ export function useMatchStats(
       tiebreaker: 0,
       matchCost,
     };
-  }
+  };
 
   return {
     winnerMode,
@@ -274,4 +276,4 @@ export function useMatchStats(
     teams,
     costBreakdown,
   };
-}
+};

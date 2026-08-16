@@ -82,18 +82,18 @@ watch(
 
 const visibleBeatmaps = computed(() => beatmaps.value.filter((b) => visibleIds.value.has(b.id)));
 
-function toggleMap(id: number) {
+const toggleMap = (id: number) => {
   const next = new Set(visibleIds.value);
   if (next.has(id)) next.delete(id);
   else next.add(id);
   visibleIds.value = next;
-}
+};
 
-function setEzMultiplier(id: number, value: number) {
+const setEzMultiplier = (id: number, value: number) => {
   const next = new Map(ezMultipliers.value);
   next.set(id, value);
   ezMultipliers.value = next;
-}
+};
 
 const submit = async () => {
   isTriggered.value = true;
