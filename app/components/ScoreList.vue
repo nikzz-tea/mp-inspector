@@ -1,7 +1,7 @@
 <script setup lang="ts">
-defineProps<{
-  globalMods: boolean;
+const props = defineProps<{
   scores: PlayerScore[];
+  commonMods: string[];
 }>();
 
 const rankColor = {
@@ -15,6 +15,8 @@ const rankColor = {
   D: 'text-red-500',
   F: 'text-red-500',
 };
+
+const mods = (s: PlayerScore) => s.mods.filter((m) => !props.commonMods.includes(m));
 </script>
 
 <template>
@@ -27,8 +29,8 @@ const rankColor = {
         {{ s.username }}
       </a>
       <span class="ml-auto font-bold" :class="rankColor[s.rank]">{{ s.rank }}</span>
-      <span v-if="!globalMods && s.mods.length" class="text-right">+{{ s.mods.join('') }}</span>
-      <span class="text-right tabular-nums" :class="globalMods && 'text-right'">
+      <span v-if="mods(s).length" class="text-right">+{{ mods(s).join('') }}</span>
+      <span class="text-right tabular-nums" :class="mods(s) && 'text-right'">
         {{ s.score.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}
       </span>
       <span class="w-12 text-right tabular-nums">{{ (s.accuracy * 100).toFixed(2) }}%</span>

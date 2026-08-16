@@ -60,6 +60,14 @@ function teamMetricDisplay(team: 'red' | 'blue') {
     ? (m * 100).toFixed(2) + '%'
     : m.toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
+
+const commonMods = computed(() => {
+  if (!props.b.scores[0] || !props.b.scores[0].mods.length) return [];
+  return props.b.scores.slice(1).reduce((acc, score) => {
+    const current = new Set(score.mods);
+    return acc.filter((m) => current.has(m));
+  }, props.b.scores[0].mods);
+});
 </script>
 
 <template>
@@ -99,7 +107,7 @@ function teamMetricDisplay(team: 'red' | 'blue') {
               {{ b.title }} [{{ b.difficultyName }}]
             </a>
             <span class="max-sm:hidden">
-              <Badge v-for="mod in b.mods" :key="mod" class="mr-1" variant="outline">
+              <Badge v-for="mod in commonMods" :key="mod" class="mr-1" variant="outline">
                 {{ mod }}
               </Badge>
             </span>
@@ -115,7 +123,7 @@ function teamMetricDisplay(team: 'red' | 'blue') {
           </span>
           <Badge variant="secondary" class="shrink-0 max-sm:mr-1">#{{ i + 1 }}</Badge>
           <span class="sm:hidden">
-            <Badge v-for="mod in b.mods" :key="mod" class="mr-1" variant="outline">
+            <Badge v-for="mod in commonMods" :key="mod" class="mr-1" variant="outline">
               {{ mod }}
             </Badge>
           </span>
@@ -131,7 +139,7 @@ function teamMetricDisplay(team: 'red' | 'blue') {
           <div v-if="isTeamPlay(b)" class="grid gap-4 max-sm:grid-rows-2 sm:grid-cols-2">
             <div>
               <p class="mb-1 text-sm font-semibold text-red-500 sm:text-right">Red</p>
-              <ScoreList :global-mods="b.mods.length > 0" :scores="teamScores(b, 'red')" />
+              <ScoreList :scores="teamScores(b, 'red')" :commonMods />
               <p
                 class="mt-2 font-semibold tabular-nums sm:text-right"
                 :class="
@@ -143,7 +151,7 @@ function teamMetricDisplay(team: 'red' | 'blue') {
             </div>
             <div>
               <p class="mb-1 text-sm font-semibold text-blue-500">Blue</p>
-              <ScoreList :global-mods="b.mods.length > 0" :scores="teamScores(b, 'blue')" />
+              <ScoreList :scores="teamScores(b, 'blue')" :commonMods />
               <p
                 class="mt-2 font-semibold tabular-nums"
                 :class="
@@ -155,7 +163,7 @@ function teamMetricDisplay(team: 'red' | 'blue') {
             </div>
           </div>
           <div v-else>
-            <ScoreList :global-mods="b.mods.length > 0" :scores="adjustedScores(b.scores)" />
+            <ScoreList :scores="adjustedScores(b.scores)" :commonMods />
           </div>
         </CardContent>
       </div>
