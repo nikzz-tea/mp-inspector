@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     osuClientSecret: process.env.OSU_CLIENT_SECRET || '',
   },
   css: ['~/assets/css/tailwind.css'],
-  modules: ['shadcn-nuxt', '@vercel/analytics', '@vercel/speed-insights'],
+  modules: ['shadcn-nuxt', '@nuxtjs/robots', '@vercel/analytics', '@vercel/speed-insights'],
   shadcn: {
     prefix: '',
   },
