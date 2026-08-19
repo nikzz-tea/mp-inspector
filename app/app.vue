@@ -1,7 +1,7 @@
 <template>
   <div
-    class="mx-auto flex min-h-screen max-w-5xl flex-col items-center px-4 py-16"
-    :class="beatmaps.length ? 'max-sm:py-4' : 'justify-center'"
+    class="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center px-4 py-12"
+    :class="!beatmaps.length && 'justify-center'"
   >
     <div class="w-full text-center">
       <div class="mx-auto max-w-3xl">
@@ -62,6 +62,11 @@
         </div>
       </div>
     </Transition>
+    <footer class="absolute bottom-4">
+      <p class="text-muted-foreground text-center text-sm">
+        not affiliated with osu! or ppy Pty Ltd
+      </p>
+    </footer>
   </div>
 </template>
 
