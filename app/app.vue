@@ -81,6 +81,8 @@ const visibleIds = ref<Set<number>>(new Set());
 const ezMultipliers = ref<Map<number, number>>(new Map());
 const invalid = computed(() => isTriggered.value && parseMatchId(input.value) === null);
 const beatmaps = computed(() => result.value?.beatmaps ?? []);
+const router = useRouter();
+const route = useRoute();
 
 watch(
   beatmaps,
@@ -114,10 +116,35 @@ const submit = async () => {
   loading.value = true;
   try {
     result.value = await $fetch<MatchDetails>(`/api/matches/${id}`);
+    await router.replace({ query: { match: id } });
   } catch (err) {
     console.error(err);
+    input.value = '';
   } finally {
     loading.value = false;
   }
 };
+
+const syncFromUrl = async () => {
+  const raw = route.query.match;
+  if (typeof raw !== 'string') return;
+
+  input.value = raw;
+  isTriggered.value = true;
+
+  const id = parseMatchId(raw);
+  if (!id) return;
+
+  loading.value = true;
+  try {
+    result.value = await $fetch<MatchDetails>(`/api/matches/${id}`);
+  } catch (err) {
+    console.error(err);
+    input.value = '';
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => syncFromUrl());
 </script>
