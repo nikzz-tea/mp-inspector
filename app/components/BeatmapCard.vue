@@ -84,7 +84,12 @@ const commonMods = computed(() => {
         min="0"
         max="10"
         class="h-9 w-14 bg-white px-1 py-0 text-right text-sm"
-        @update:model-value="(v) => emit('update:ezMultiplier', Number(v) || 1)"
+        @update:model-value="
+          (v) => {
+            if (Number(v) > 10) return;
+            emit('update:ezMultiplier', Number(v) || 1);
+          }
+        "
       />
       <Button
         type="button"
