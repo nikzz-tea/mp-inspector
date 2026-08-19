@@ -56,6 +56,13 @@ const toBeatmapPlayed = (
 ): BeatmapPlayed => {
   const beatmap = game.beatmap;
   const beatmapset = beatmap?.beatmapset;
+  const scores = game.scores.map((s) => toPlayerScore(s, userById));
+  let teamType = game.team_type;
+  if (teamType === 'head-to-head' && scores.length === 2) {
+    teamType = 'team-vs';
+    if (scores[0]) scores[0].team = 'red';
+    if (scores[1]) scores[1].team = 'blue';
+  }
 
   return {
     id: game.id,
@@ -64,14 +71,14 @@ const toBeatmapPlayed = (
     endTime: game.end_time,
     startTimeLabel: formatTime(game.start_time),
     mode: game.mode,
-    teamType: game.team_type,
+    teamType,
     mods: game.mods,
     title: beatmapset?.title ?? beatmapset?.title_unicode ?? '',
     artist: beatmapset?.artist ?? beatmapset?.artist_unicode ?? '',
     creator: beatmapset?.creator ?? '',
     difficultyName: beatmap?.version ?? '',
     difficultyRating: beatmap?.difficulty_rating ?? 0,
-    scores: game.scores.map((s) => toPlayerScore(s, userById)).sort((a, b) => b.score - a.score),
+    scores,
   };
 };
 
