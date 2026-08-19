@@ -6,7 +6,13 @@
     <div class="w-full text-center">
       <div class="mx-auto max-w-3xl">
         <h1 class="text-5xl font-bold">osu! mp inspector</h1>
-        <form class="mt-8 flex w-full flex-row gap-3 max-sm:flex-col" @submit.prevent="submit">
+        <form
+          class="relative mt-8 flex w-full flex-row gap-3 max-sm:flex-col"
+          @submit.prevent="submit"
+        >
+          <span v-if="invalid" class="text-destructive absolute -top-6 left-2 text-sm">
+            {{ errorMessage }}
+          </span>
           <Input
             v-model="input"
             type="text"
@@ -74,6 +80,7 @@
 const input = ref('');
 const isTriggered = ref(false);
 const loading = ref(false);
+const errorMessage = ref('Invalid match ID');
 const result = ref<MatchDetails | null>(null);
 const winnerMode = ref<WinnerMode>('score');
 const costFormula = ref<CostFormula>('bathbot');
@@ -120,6 +127,7 @@ const submit = async () => {
   } catch (err) {
     console.error(err);
     input.value = '';
+    errorMessage.value = 'Match not found';
   } finally {
     loading.value = false;
   }
@@ -141,6 +149,7 @@ const syncFromUrl = async () => {
   } catch (err) {
     console.error(err);
     input.value = '';
+    errorMessage.value = 'Match not found';
   } finally {
     loading.value = false;
   }
