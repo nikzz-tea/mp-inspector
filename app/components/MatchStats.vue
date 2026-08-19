@@ -75,18 +75,18 @@ const onCostFormula = (value: AcceptableValue) => {
     <CardContent>
       <div v-if="teamPlayed" class="grid gap-8 sm:grid-cols-2">
         <div>
-          <div class="flex items-center max-sm:gap-2 sm:justify-between">
-            <span class="size-4 rounded-full bg-blue-500"></span>
-            <span class="text-xl font-bold text-blue-500"> {{ teamMapWins.blue ?? 0 }} </span>
-          </div>
-          <StatsTable :players="bluePlayers" :playerRank :cost-breakdown="costBreakdown" />
-        </div>
-        <div>
           <div class="max-sm flex items-center max-sm:gap-2 sm:justify-between">
             <span class="text-xl font-bold text-red-500"> {{ teamMapWins.red ?? 0 }} </span>
             <span class="size-4 rounded-full bg-red-500"></span>
           </div>
           <StatsTable :players="redPlayers" :playerRank :cost-breakdown="costBreakdown" />
+        </div>
+        <div>
+          <div class="flex items-center max-sm:gap-2 sm:justify-between">
+            <span class="size-4 rounded-full bg-blue-500"></span>
+            <span class="text-xl font-bold text-blue-500"> {{ teamMapWins.blue ?? 0 }} </span>
+          </div>
+          <StatsTable :players="bluePlayers" :playerRank :cost-breakdown="costBreakdown" />
         </div>
       </div>
       <StatsTable v-else :players="players" :playerRank :cost-breakdown="costBreakdown" />
