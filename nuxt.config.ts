@@ -4,6 +4,12 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'osu! mp inspector',
+      meta: [
+        { name: 'description', content: 'Various information and stats about osu! matches' },
+        { name: 'og:title', content: 'osu! mp inspector' },
+        { name: 'og:description', content: 'Various information and stats about osu! matches' },
+        { name: 'og:type', content: 'website' },
+      ],
     },
   },
   runtimeConfig: {
