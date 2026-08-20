@@ -78,7 +78,7 @@ const toBeatmapPlayed = (
     creator: beatmapset?.creator ?? '',
     difficultyName: beatmap?.version ?? '',
     difficultyRating: beatmap?.difficulty_rating ?? 0,
-    scores,
+    scores: scores.sort((a, b) => b.score - a.score),
   };
 };
 
