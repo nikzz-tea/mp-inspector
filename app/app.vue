@@ -37,7 +37,7 @@
     >
       <div v-if="beatmaps.length && result" class="mx-auto mt-10 w-full text-left">
         <a
-          :href="'https://osu.ppy.sh/community/matches/' + result.match.id"
+          :href="'https://osu.ppy.sh/mp/' + result.match.id"
           class="block text-center text-2xl hover:underline"
         >
           {{ result.match.name }}
@@ -48,6 +48,8 @@
           v-model:winner-mode="winnerMode"
           v-model:cost-formula="costFormula"
           :ez-multipliers="ezMultipliers"
+          :match-title="result.match.name"
+          :match-url="'https://osu.ppy.sh/mp/' + result.match.id"
           class="mt-4"
         />
         <h2 class="text-muted-foreground mt-2 text-sm font-medium">
