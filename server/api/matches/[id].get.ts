@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
 
   const beatmaps: BeatmapPlayed[] = osu.events
     .filter((event) => event.game != null && event.game.scores.length > 0)
-    .map((event) => toBeatmapPlayed(event.game!, userById));
+    .map((event) => toBeatmapPlayed(event.game!, userById, osu.users.length));
 
   const result: MatchDetails = {
     match: osu.match,
@@ -53,12 +53,13 @@ export default defineEventHandler(async (event) => {
 const toBeatmapPlayed = (
   game: NonNullable<MatchEvent['game']>,
   userById: Map<number, string>,
+  totalPlayers: number,
 ): BeatmapPlayed => {
   const beatmap = game.beatmap;
   const beatmapset = beatmap?.beatmapset;
   const scores = game.scores.map((s) => toPlayerScore(s, userById));
   let teamType = game.team_type;
-  if (teamType === 'head-to-head' && scores.length === 2) {
+  if (teamType === 'head-to-head' && totalPlayers === 2 && scores.length === 2) {
     teamType = 'team-vs';
     if (scores[0]) scores[0].team = 'red';
     if (scores[1]) scores[1].team = 'blue';
