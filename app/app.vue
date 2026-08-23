@@ -96,7 +96,9 @@ const route = useRoute();
 watch(
   beatmaps,
   (list) => {
-    visibleIds.value = new Set(list.map((b) => b.id));
+    visibleIds.value = new Set(
+      list.filter((b) => !b.scores.every((s) => s.score === 0)).map((b) => b.id),
+    );
   },
   { deep: true },
 );
