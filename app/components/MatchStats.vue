@@ -119,21 +119,21 @@ const onCopy = async () => {
         </CardTitle>
         <div class="flex flex-wrap gap-2">
           <Select :model-value="winnerModeRef" @update:model-value="onWinnerMode">
-            <SelectTrigger class="w-42">
+            <SelectTrigger class="w-42 cursor-pointer">
               <SelectValue placeholder="Win condition" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="score">Total score</SelectItem>
-              <SelectItem value="accuracy">Average accuracy</SelectItem>
+              <SelectItem value="score" class="cursor-pointer">Total score</SelectItem>
+              <SelectItem value="accuracy" class="cursor-pointer">Average accuracy</SelectItem>
             </SelectContent>
           </Select>
           <Select :model-value="costFormulaRef" @update:model-value="onCostFormula">
-            <SelectTrigger class="w-42">
+            <SelectTrigger class="w-42 cursor-pointer">
               <SelectValue placeholder="Match cost" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="bathbot">Bathbot formula</SelectItem>
-              <SelectItem value="osuplus">osu!plus formula</SelectItem>
+              <SelectItem value="bathbot" class="cursor-pointer">Bathbot formula</SelectItem>
+              <SelectItem value="osuplus" class="cursor-pointer">osu!plus formula</SelectItem>
             </SelectContent>
           </Select>
         </div>
