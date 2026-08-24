@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@lucide/vue": "^1.31.0",
+    "@nuxtjs/color-mode": "^4.0.1",
     "@nuxtjs/robots": "^6.1.5",
     "@nuxtjs/sitemap": "^8.3.4",
     "@tailwindcss/vite": "^4.3.3",

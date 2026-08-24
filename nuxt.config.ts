@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     '@nuxtjs/sitemap',
     '@vercel/analytics',
     '@vercel/speed-insights',
+    '@nuxtjs/color-mode',
   ],
   shadcn: {
     prefix: '',
