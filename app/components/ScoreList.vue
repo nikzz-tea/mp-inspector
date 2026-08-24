@@ -30,7 +30,7 @@ const mods = (s: PlayerScore) => s.mods.filter((m) => !props.commonMods.includes
       </a>
       <span class="ml-auto font-bold" :class="rankColor[s.rank]">{{ s.rank }}</span>
       <span v-if="mods(s).length" class="text-right">+{{ mods(s).join('') }}</span>
-      <span class="text-right tabular-nums" :class="mods(s) && 'text-right'">
+      <span class="text-right tabular-nums">
         {{ s.score.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}
       </span>
       <span class="w-12 text-right tabular-nums">{{ (s.accuracy * 100).toFixed(2) }}%</span>

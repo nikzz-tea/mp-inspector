@@ -16,7 +16,7 @@ const playerColor = ['text-yellow-500', 'text-zinc-400', 'text-orange-700'];
   <Table>
     <TableHeader class="[&_tr]:border-0">
       <TableRow class="border-0 hover:bg-transparent">
-        <TableHead class="text-muted-foreground text-brow px-2 text-xs font-normal max-sm:px-0">
+        <TableHead class="text-muted-foreground px-2 text-xs font-normal max-sm:px-0">
           Player
         </TableHead>
         <TableHead class="text-muted-foreground px-2 text-right text-xs font-normal max-sm:px-0">
