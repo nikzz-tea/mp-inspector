@@ -98,7 +98,7 @@ const onCopy = async () => {
 </script>
 
 <template>
-  <Card class="gap-4 border-none shadow-none *:max-sm:p-0">
+  <Card class="gap-4 border-none bg-transparent shadow-none *:max-sm:p-0">
     <CardHeader>
       <div class="flex justify-between gap-2 max-sm:flex-col sm:items-center">
         <CardTitle class="flex shrink-0 items-center gap-2">

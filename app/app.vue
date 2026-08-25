@@ -1,4 +1,5 @@
 <template>
+  <ThemeSwitcher />
   <div
     class="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center px-4 py-12"
     :class="!beatmaps.length && 'justify-center'"
