@@ -134,6 +134,7 @@ const onCopy = async () => {
             <SelectContent>
               <SelectItem value="bathbot" class="cursor-pointer">Bathbot formula</SelectItem>
               <SelectItem value="osuplus" class="cursor-pointer">osu!plus formula</SelectItem>
+              <SelectItem value="elitebotix" class="cursor-pointer">Elitebotix formula</SelectItem>
             </SelectContent>
           </Select>
         </div>

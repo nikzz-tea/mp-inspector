@@ -1,5 +1,5 @@
 export type WinnerMode = 'score' | 'accuracy';
-export type CostFormula = 'bathbot' | 'osuplus';
+export type CostFormula = 'bathbot' | 'osuplus' | 'elitebotix';
 
 export interface PlayerStats {
   userId: number;
@@ -175,6 +175,9 @@ export const useMatchStats = (
   const MOD_BONUS = 0.02;
   const TIEBREAKER_FACTOR = 0.25;
   const MAX_TIEBREAKER_BONUS = 0.5;
+  const ELITEBOTIX_MIN_SCORE = 10000;
+  const ELITEBOTIX_BASE_FACTOR = 0.8;
+  const ELITEBOTIX_PLAYED_FACTOR = 0.2;
 
   const perGameRatio = (playerId: number) => {
     return visibleBeatmaps.value
@@ -254,8 +257,59 @@ export const useMatchStats = (
     return consistencyMultiplier * totalRelativeScore;
   };
 
+  const median = (values: number[]): number => {
+    if (!values.length) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    const upper = sorted[mid] ?? 0;
+    if (sorted.length % 2) return upper;
+    return ((sorted[mid - 1] ?? 0) + upper) / 2;
+  };
+
+  const elitebotixValue = (p: { rounds: number; total: number }): number =>
+    (p.total / p.rounds) * (ELITEBOTIX_BASE_FACTOR + ELITEBOTIX_PLAYED_FACTOR * p.rounds);
+
+  const elitebotixResults = computed(() => {
+    const perPlayer = new Map<number, { rounds: number; total: number }>();
+    for (const b of visibleBeatmaps.value) {
+      const all = adjustedScores(b);
+      if (all.length <= 1) continue;
+      const scores = all.filter((s) => s.score >= ELITEBOTIX_MIN_SCORE);
+      if (!scores.length) continue;
+      const even = scores.length % 2 === 0;
+      for (const [i, s] of scores.entries()) {
+        const middle = median(
+          even ? scores.filter((_, k) => k !== i).map((x) => x.score) : scores.map((x) => x.score),
+        );
+        if (!middle) continue;
+        const p = perPlayer.get(s.userId) ?? { rounds: 0, total: 0 };
+        p.rounds += 1;
+        p.total += s.score / middle;
+        perPlayer.set(s.userId, p);
+      }
+    }
+    const divisor = median([...perPlayer.values()].map(elitebotixValue)) || 1;
+    return { perPlayer, divisor };
+  });
+
+  const elitebotixCost = (playerId: number): number => {
+    const { perPlayer, divisor } = elitebotixResults.value;
+    const p = perPlayer.get(playerId);
+    return p ? elitebotixValue(p) / divisor : 0;
+  };
+
   const costBreakdown = (playerId: number): CostBreakdown => {
     if (costFormula.value === 'bathbot') return bathbotBreakdown(playerId);
+    if (costFormula.value === 'elitebotix') {
+      const matchCost = elitebotixCost(playerId);
+      return {
+        performance: matchCost,
+        participation: 1,
+        mods: 1,
+        tiebreaker: 0,
+        matchCost,
+      };
+    }
     const matchCost = osuPlusCost(playerId);
     return {
       performance: matchCost,
