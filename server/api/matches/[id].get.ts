@@ -37,10 +37,13 @@ export default defineEventHandler(async (event) => {
   const osu = await fetchAllMatchEvents(id, headers);
 
   const userById = new Map(osu.users.map((u) => [u.id, u.username]));
+  const totalPlayers = new Set(
+    osu.events.flatMap((event) => event.game?.scores ?? []).map((score) => score.user_id),
+  ).size;
 
   const beatmaps: BeatmapPlayed[] = osu.events
     .filter((event) => event.game != null && event.game.scores.length > 0)
-    .map((event) => toBeatmapPlayed(event.game!, userById, osu.users.length));
+    .map((event) => toBeatmapPlayed(event.game!, userById, totalPlayers));
 
   const result: MatchDetails = {
     match: osu.match,
