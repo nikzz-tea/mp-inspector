@@ -53,7 +53,8 @@ const onCostFormula = (value: AcceptableValue) => {
 const playerLine = (p: PlayerStats, rank: number): string => {
   const breakdown = costBreakdown(p.userId);
   const medal = ['🥇', '🥈', '🥉'][rank] ?? '';
-  const name = medal ? `${p.username} ${medal}` : p.username;
+  const username = `[${p.username}](<https://osu.ppy.sh/u/${p.userId}>)`;
+  const name = medal ? `${username} ${medal}` : username;
   const score = p.avgScore.toLocaleString(undefined, { maximumFractionDigits: 0 });
   const acc = `${(p.avgAccuracy * 100).toFixed(1)}%`;
   const parts = [
