@@ -29,7 +29,7 @@ export interface CostBreakdown {
 export const useMatchStats = (
   beatmaps: Ref<BeatmapPlayed[]>,
   visibleIds: Ref<Set<number>>,
-  winnerMode: Ref<WinnerMode>,
+  winnerModes: Ref<Map<number, WinnerMode>>,
   costFormula: Ref<CostFormula>,
   ezMultipliers: Ref<Map<number, number>>,
 ) => {
@@ -63,7 +63,7 @@ export const useMatchStats = (
     const wins: Record<string, number> = {};
     for (const b of visibleBeatmaps.value) {
       if (!teamPlayed.value) break;
-      const winner = mapWinner(b, winnerMode.value);
+      const winner = mapWinner(b, winnerModes.value.get(b.id) ?? 'score');
       if (winner) wins[winner] = (wins[winner] ?? 0) + 1;
     }
     return wins;
@@ -321,7 +321,7 @@ export const useMatchStats = (
   };
 
   return {
-    winnerMode,
+    winnerModes,
     costFormula,
     teamPlayed,
     teamMapWins,

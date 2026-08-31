@@ -46,7 +46,7 @@
         <MatchStats
           :beatmaps="beatmaps"
           :visible-ids="visibleIds"
-          v-model:winner-mode="winnerMode"
+          v-model:winner-modes="winnerModes"
           v-model:cost-formula="costFormula"
           :ez-multipliers="ezMultipliers"
           :match-title="result.match.name"
@@ -62,10 +62,11 @@
             :key="b.id"
             :b
             :i
-            :winner-mode="winnerMode"
+            :winner-mode="winnerModes.get(b.id) ?? 'score'"
             :ez-multiplier="ezMultipliers.get(b.id)"
             :hidden="!visibleIds.has(b.id)"
             @toggle="toggleMap(b.id)"
+            @update:winner-mode="(v) => setWinnerMode(b.id, v)"
             @update:ez-multiplier="(v) => setEzMultiplier(b.id, v)"
           />
         </div>
@@ -85,7 +86,7 @@ const isTriggered = ref(false);
 const loading = ref(false);
 const errorMessage = ref('Invalid match ID');
 const result = ref<MatchDetails | null>(null);
-const winnerMode = ref<WinnerMode>('score');
+const winnerModes = ref<Map<number, WinnerMode>>(new Map());
 const costFormula = ref<CostFormula>('bathbot');
 const visibleIds = ref<Set<number>>(new Set());
 const ezMultipliers = ref<Map<number, number>>(new Map());
@@ -117,6 +118,12 @@ const setEzMultiplier = (id: number, value: number) => {
   const next = new Map(ezMultipliers.value);
   next.set(id, value);
   ezMultipliers.value = next;
+};
+
+const setWinnerMode = (id: number, mode: WinnerMode) => {
+  const next = new Map(winnerModes.value);
+  next.set(id, mode);
+  winnerModes.value = next;
 };
 
 const submit = async () => {

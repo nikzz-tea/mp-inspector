@@ -5,7 +5,7 @@ import type { AcceptableValue } from 'reka-ui';
 const props = defineProps<{
   beatmaps: BeatmapPlayed[];
   visibleIds: Set<number>;
-  winnerMode: WinnerMode;
+  winnerModes: Map<number, WinnerMode>;
   costFormula: CostFormula;
   ezMultipliers: Map<number, number>;
   matchTitle: string;
@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:winnerMode', value: WinnerMode): void;
+  (e: 'update:winnerModes', value: Map<number, WinnerMode>): void;
   (e: 'update:costFormula', value: CostFormula): void;
 }>();
 
@@ -22,14 +22,14 @@ let resetTimer: ReturnType<typeof setTimeout> | undefined;
 
 const beatmapsRef = toRef(props, 'beatmaps');
 const visibleIdsRef = toRef(props, 'visibleIds');
-const winnerModeRef = toRef(props, 'winnerMode');
+const winnerModesRef = toRef(props, 'winnerModes');
 const costFormulaRef = toRef(props, 'costFormula');
 const ezMultipliersRef = toRef(props, 'ezMultipliers');
 
 const { teamPlayed, teamMapWins, players, costBreakdown } = useMatchStats(
   beatmapsRef,
   visibleIdsRef,
-  winnerModeRef,
+  winnerModesRef,
   costFormulaRef,
   ezMultipliersRef,
 );
@@ -43,7 +43,11 @@ const playerRank = computed<Map<PlayerStats['userId'], number>>(() => {
 });
 
 const onWinnerMode = (value: AcceptableValue) => {
-  if (value != null) emit('update:winnerMode', value as WinnerMode);
+  if (value == null) return;
+  const mode = value as WinnerMode;
+  const next = new Map<number, WinnerMode>();
+  for (const b of props.beatmaps) next.set(b.id, mode);
+  emit('update:winnerModes', next);
 };
 
 const onCostFormula = (value: AcceptableValue) => {
@@ -119,7 +123,7 @@ const onCopy = async () => {
           </Button>
         </CardTitle>
         <div class="flex flex-wrap gap-2">
-          <Select :model-value="winnerModeRef" @update:model-value="onWinnerMode">
+          <Select @update:model-value="onWinnerMode">
             <SelectTrigger class="w-42 cursor-pointer">
               <SelectValue placeholder="Win condition" />
             </SelectTrigger>

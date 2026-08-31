@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Eye, EyeOff } from '@lucide/vue';
+import { Eye, EyeOff, ArrowUp10, Percent } from '@lucide/vue';
 
 const props = defineProps<{
   b: BeatmapPlayed;
@@ -11,8 +11,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'toggle'): void;
+  (e: 'update:winnerMode', value: WinnerMode): void;
   (e: 'update:ezMultiplier', value: number): void;
 }>();
+
+const toggleWinnerMode = () => {
+  emit('update:winnerMode', props.winnerMode === 'accuracy' ? 'score' : 'accuracy');
+};
 
 const isTeamPlay = (b: BeatmapPlayed): boolean => {
   return b.teamType === 'team-vs' || b.teamType === 'tag-team-vs';
@@ -91,6 +96,18 @@ const commonMods = computed(() => {
           }
         "
       />
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        class="bg-background text-muted-foreground hover:text-foreground cursor-pointer rounded-md shadow-xs"
+        aria-label="Win condition"
+        title="Win condition"
+        @click="toggleWinnerMode"
+      >
+        <Percent v-if="winnerMode === 'accuracy'" class="size-4" />
+        <ArrowUp10 v-else class="size-4" />
+      </Button>
       <Button
         type="button"
         variant="outline"
