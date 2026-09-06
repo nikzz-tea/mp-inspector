@@ -34,8 +34,12 @@ const playerColor = ['text-yellow-500', 'text-zinc-400', 'text-orange-700'];
       </TableRow>
     </TableHeader>
     <TableBody class="[&_tr:last-child]:border-0">
-      <TableRow v-for="p in players" :key="p.userId" class="border-0 hover:bg-transparent">
-        <TableCell class="px-2 max-sm:px-0">
+      <TableRow
+        v-for="p in players"
+        :key="p.userId"
+        class="max-sm:border-border/80 sm:even:bg-muted/80 hover:bg-transparent sm:border-b-0"
+      >
+        <TableCell class="rounded-l-md px-2 max-sm:px-0">
           <a
             :href="'https://osu.ppy.sh/u/' + p.userId"
             class="text-foreground font-medium hover:underline"
@@ -51,7 +55,7 @@ const playerColor = ['text-yellow-500', 'text-zinc-400', 'text-orange-700'];
           {{ (p.avgAccuracy * 100).toFixed(2) }}%
         </TableCell>
         <TableCell class="px-2 text-right tabular-nums max-sm:px-0">{{ p.gamesPlayed }}</TableCell>
-        <TableCell class="px-2 text-right max-sm:px-0">
+        <TableCell class="rounded-r-md px-2 text-right max-sm:px-0">
           <span class="font-semibold tabular-nums" :title="breakdownTitle(costBreakdown(p.userId))">
             {{ costBreakdown(p.userId).matchCost.toFixed(2) }}
           </span>
