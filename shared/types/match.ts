@@ -15,6 +15,7 @@ export interface MatchDetails {
 export interface BeatmapPlayed {
   id: number;
   beatmapId: number;
+  beatmapCover: string;
   startTime: string | null;
   endTime: string | null;
   startTimeLabel: string;
@@ -138,5 +139,8 @@ export interface Beatmap {
     creator: string;
     id: number;
     status: string;
+    covers: {
+      cover: string;
+    };
   };
 }

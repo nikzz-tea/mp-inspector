@@ -76,10 +76,24 @@ const commonMods = computed(() => {
 </script>
 
 <template>
-  <Card :class="hidden ? 'opacity-60' : ''" class="group relative gap-2 duration-200">
+  <Card :class="hidden && 'opacity-60'" class="group relative gap-2 duration-200">
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 z-0 h-28 overflow-hidden rounded-t-xl"
+      :class="hidden && 'rounded-xl'"
+    >
+      <img
+        :src="b.beatmapCover"
+        alt=""
+        class="h-full w-full object-cover blur-[2px] brightness-[0.9]"
+      />
+      <div
+        aria-hidden="true"
+        class="dark:from-card/30 dark:via-card/60 dark:to-card pointer-events-none absolute inset-0 bg-linear-to-b from-white/30 via-white/60 to-white"
+      ></div>
+    </div>
     <div
       class="absolute z-10 flex items-center gap-1 duration-150 max-sm:-top-3 max-sm:right-4 sm:-top-2 sm:right-12 sm:opacity-0 sm:group-hover:-top-3 sm:group-hover:opacity-100"
-      :class="hidden ? 'sm:-top-3 sm:opacity-100' : ''"
+      :class="hidden && 'sm:-top-3 sm:opacity-100'"
     >
       <Input
         v-if="hasEZInMap"
@@ -122,7 +136,7 @@ const commonMods = computed(() => {
       </Button>
     </div>
     <CardHeader>
-      <div class="flex items-start justify-between gap-4 max-sm:flex-col-reverse max-sm:gap-2">
+      <div class="z-10 flex items-start justify-between gap-4 max-sm:flex-col-reverse max-sm:gap-2">
         <div class="min-w-0 pr-8">
           <CardTitle class="sm:truncate">
             <a :href="'https://osu.ppy.sh/b/' + b.beatmapId" class="hover:underline">
@@ -143,7 +157,7 @@ const commonMods = computed(() => {
           <span class="text-muted-foreground mr-3 text-xs max-sm:hidden">
             {{ b.startTimeLabel }}
           </span>
-          <Badge variant="secondary" class="shrink-0 max-sm:mr-1">#{{ i + 1 }}</Badge>
+          <Badge variant="outline" class="shrink-0 max-sm:mr-1"> #{{ i + 1 }} </Badge>
           <span class="sm:hidden">
             <Badge v-for="mod in commonMods" :key="mod" class="mr-1" variant="outline">
               {{ mod }}

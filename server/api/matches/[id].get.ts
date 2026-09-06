@@ -68,9 +68,12 @@ const toBeatmapPlayed = (
     if (scores[1]) scores[1].team = 'blue';
   }
 
+  console.log(game.beatmap.beatmapset_id, game.beatmap.beatmapset.id, game.beatmap.beatmapset);
+
   return {
     id: game.id,
     beatmapId: game.beatmap_id,
+    beatmapCover: game.beatmap.beatmapset.covers.cover,
     startTime: game.start_time,
     endTime: game.end_time,
     startTimeLabel: formatTime(game.start_time),
