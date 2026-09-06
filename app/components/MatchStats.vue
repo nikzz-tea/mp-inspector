@@ -123,7 +123,7 @@ const onCopy = async () => {
           </Button>
         </CardTitle>
         <div class="flex flex-wrap gap-2">
-          <Select @update:model-value="onWinnerMode">
+          <Select v-if="teamPlayed" @update:model-value="onWinnerMode">
             <SelectTrigger class="w-42 cursor-pointer">
               <SelectValue placeholder="Win condition" />
             </SelectTrigger>

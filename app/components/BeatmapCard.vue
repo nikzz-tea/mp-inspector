@@ -111,6 +111,7 @@ const commonMods = computed(() => {
         "
       />
       <Button
+        v-if="isTeamPlay(b)"
         type="button"
         variant="outline"
         size="icon"
