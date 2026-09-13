@@ -76,10 +76,10 @@ const commonMods = computed(() => {
 </script>
 
 <template>
-  <Card :class="hidden && 'opacity-60'" class="group relative gap-2 duration-200">
+  <Card :class="hidden && 'opacity-60'" class="group relative gap-0 duration-200">
     <div
-      class="pointer-events-none absolute inset-x-0 top-0 z-0 h-28 overflow-hidden rounded-t-xl"
-      :class="hidden && 'rounded-xl'"
+      class="pointer-events-none absolute inset-x-0 top-0 z-0 h-28 max-h-full overflow-hidden rounded-t-xl"
+      :class="hidden && 'sm:rounded-xl'"
     >
       <img
         :src="b.beatmapCover"
@@ -88,7 +88,7 @@ const commonMods = computed(() => {
       />
       <div
         aria-hidden="true"
-        class="dark:from-card/30 dark:via-card/60 dark:to-card pointer-events-none absolute inset-0 bg-linear-to-b from-white/30 via-white/60 to-white"
+        class="dark:from-card/0 dark:via-card/60 dark:to-card pointer-events-none absolute inset-0 bg-linear-to-b from-white/0 via-white/60 to-white"
       ></div>
     </div>
     <div
@@ -136,7 +136,7 @@ const commonMods = computed(() => {
         <EyeOff v-else class="size-4" />
       </Button>
     </div>
-    <CardHeader>
+    <CardHeader class="gap-0">
       <div class="z-10 flex items-start justify-between gap-4 max-sm:flex-col-reverse max-sm:gap-2">
         <div class="min-w-0 pr-8">
           <CardTitle class="sm:truncate">
@@ -168,8 +168,8 @@ const commonMods = computed(() => {
       </div>
     </CardHeader>
     <div
-      class="grid transition-[grid-template-rows] duration-200 ease-out"
-      :class="hidden ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr]'"
+      class="z-10 grid transition-[grid-template-rows] duration-200 ease-out"
+      :class="hidden ? 'grid-rows-[0fr] opacity-0' : 'mt-4 grid-rows-[1fr]'"
     >
       <div class="overflow-hidden">
         <CardContent class="flex flex-col gap-4">
