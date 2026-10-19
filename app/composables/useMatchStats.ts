@@ -1,4 +1,4 @@
-export type WinnerMode = 'score' | 'accuracy';
+export type WinnerMode = 'score' | 'accuracy' | 'misscount';
 export type CostFormula = 'bathbot' | 'osuplus' | 'elitebotix';
 
 export interface PlayerStats {
@@ -157,6 +157,13 @@ export const useMatchStats = (
       const blueAcc = blue.reduce((sum, s) => sum + s.accuracy, 0) / blue.length;
       if (redAcc === blueAcc) return null;
       return redAcc > blueAcc ? 'red' : 'blue';
+    }
+
+    if (mode === 'misscount') {
+      const redMisses = red.reduce((sum, s) => sum + s.statistics.count_miss, 0);
+      const blueMisses = blue.reduce((sum, s) => sum + s.statistics.count_miss, 0);
+      if (redMisses === blueMisses) return null;
+      return redMisses < blueMisses ? 'red' : 'blue';
     }
 
     const redScore = adjustedScores(b)

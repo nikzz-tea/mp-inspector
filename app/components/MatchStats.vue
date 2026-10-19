@@ -130,6 +130,7 @@ const onCopy = async () => {
             <SelectContent>
               <SelectItem value="score" class="cursor-pointer">Total score</SelectItem>
               <SelectItem value="accuracy" class="cursor-pointer">Average accuracy</SelectItem>
+              <SelectItem value="misscount" class="cursor-pointer">Total misses</SelectItem>
             </SelectContent>
           </Select>
           <Select :model-value="costFormulaRef" @update:model-value="onCostFormula">

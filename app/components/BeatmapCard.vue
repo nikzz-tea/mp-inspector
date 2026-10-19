@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Eye, EyeOff, ArrowUp10, Percent } from '@lucide/vue';
+import { Eye, EyeOff, ArrowUp10, Percent, X } from '@lucide/vue';
 
 const props = defineProps<{
   b: BeatmapPlayed;
@@ -15,8 +15,11 @@ const emit = defineEmits<{
   (e: 'update:ezMultiplier', value: number): void;
 }>();
 
+const winnerModeCycle: WinnerMode[] = ['score', 'accuracy', 'misscount'];
+
 const toggleWinnerMode = () => {
-  emit('update:winnerMode', props.winnerMode === 'accuracy' ? 'score' : 'accuracy');
+  const i = winnerModeCycle.indexOf(props.winnerMode);
+  emit('update:winnerMode', winnerModeCycle[(i + 1) % winnerModeCycle.length]!);
 };
 
 const isTeamPlay = (b: BeatmapPlayed): boolean => {
@@ -48,6 +51,9 @@ const teamMetric = (b: BeatmapPlayed, team: 'red' | 'blue'): number => {
   if (props.winnerMode === 'accuracy') {
     return scores.reduce((sum, s) => sum + s.accuracy, 0) / scores.length;
   }
+  if (props.winnerMode === 'misscount') {
+    return scores.reduce((sum, s) => sum + s.statistics.count_miss, 0);
+  }
   return scores.reduce((sum, s) => sum + s.score, 0);
 };
 
@@ -56,6 +62,7 @@ const winningTeam = computed(() => {
   const red = teamMetric(props.b, 'red');
   const blue = teamMetric(props.b, 'blue');
   if (red === blue) return null;
+  if (props.winnerMode === 'misscount') return red < blue ? 'red' : 'blue';
   return red > blue ? 'red' : 'blue';
 });
 
@@ -121,6 +128,7 @@ const commonMods = computed(() => {
         @click="toggleWinnerMode"
       >
         <Percent v-if="winnerMode === 'accuracy'" class="size-4" />
+        <X v-else-if="winnerMode === 'misscount'" class="size-4" />
         <ArrowUp10 v-else class="size-4" />
       </Button>
       <Button
