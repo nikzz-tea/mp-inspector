@@ -194,7 +194,7 @@ export const useMatchStats = (
         const sum = scores.reduce((acc, s) => acc + s.score, 0);
         const avg = sum / scores.length;
         const player = scores.find((s) => s.userId === playerId)!;
-        return player.score / avg;
+        return avg ? player.score / avg : 0;
       });
   };
 
